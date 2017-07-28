@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Total</th>
+                    <th> </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr id="putProductListHere">
+
+                </tr>
+                <tr>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td><h5>Subtotal</h5></td>
+                    <td class="text-right"><h5><strong id="subtotal">$0</strong></h5></td>
+                </tr>
+                <tr>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td><h5>Estimated shipping</h5></td>
+                    <td class="text-right"><h5><strong id="estimated-shipping">$6.94</strong></h5></td>
+                </tr>
+                <tr>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td><h3>Total</h3></td>
+                    <td class="text-right"><h3><strong id="grand-total">$0</strong></h3></td>
+                </tr>
+                <tr>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success">
+                            Checkout <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"
+></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"
+></script>
+
+<script>
+    $(document).ready(function () {
+        var productList = [
+            {"productName": "Video Game", "brand": "Microsoft", "unitPrice": 49.99},
+            {"productName": "Gaming Laptop", "brand": "ROG", "unitPrice": 1799.99},
+            {"productName": "Dog food", "brand": "Taste Of The Wild", "unitPrice": 44.99}
+        ];
+
+        var productsHTML = '';
+
+        for (var product of productList) {
+            productsHTML += generateProductHTML(product);
+        }
+        $('#putProductListHere').replaceWith(productsHTML);
+
+        function generateProductHTML(product) {
+            return `
+                <tr>
+                    <td class="col-sm-8 col-md-6">
+                        <div class="media">
+                            <a class="thumbnail pull-left" href="#"> <img class="media-object"
+                                                                          src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-2/72/product-icon.png"
+                                                                          style="width: 72px; height: 72px;"> </a>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a href="#">${product.productName}</a></h4>
+                                <h5 class="media-heading"> by <a href="#">${product.brand}</a></h5>
+                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-sm-1 col-md-1" style="text-align: center">
+                        <input type="number" class="form-control quantity-selector" value="0" min="0">
+                    </td>
+                    <td class="col-sm-1 col-md-1 text-center unit-price"><strong>${product.unitPrice}</strong></td>
+                    <td class="col-sm-1 col-md-1 text-center cost-to-purchase-item"><strong>0</strong></td>
+                    <td class="col-sm-1 col-md-1">
+                        <button type="button" class="btn btn-danger remove-from-cart">
+                            <span class="glyphicon glyphicon-remove"></span> Remove
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+    $(document).on("click", ".remove-from-cart", function () {
+        $(this).parent().parent().find('input').val(0);
+        $(this).parent().parent().find('.cost-to-purchase-item').html(`<strong>0</strong>`);
+        updateTotals();
+    });
+    $(document).on("click", ".quantity-selector", function () {
+        var unitPrice = Number($(this).parent().parent().find('.unit-price strong').text().trim());
+        var quantitySelected = Number($(this).val());
+        $(this).parent().parent().find('.cost-to-purchase-item').html(`<strong>${unitPrice * quantitySelected}</strong>`);
+        updateTotals();
+    });
+
+    function updateTotals() {
+        var subTotal = 0;
+        $.each($('.cost-to-purchase-item strong'), function () {
+            subTotal += Number($(this).html().trim());
+        });
+        $('#subtotal').html(subTotal);
+
+        var estimatedShipping = Number($('#estimated-shipping').html().replace('$','').trim());
+        $('#grand-total').html(`$${subTotal + estimatedShipping}`);
+    };
+</script>
+</body>
+</html>
